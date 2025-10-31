@@ -25,7 +25,7 @@ class _SplashState extends State<Splash> {
   Future<void> fetchLogo() async {
     try {
       final response = await http
-          .get(Uri.parse('http://10.0.2.2/apiapam/get_logo.php'))
+          .get(Uri.parse('http://192.168.1.6/apiapam/get_logo.php'))
           .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {

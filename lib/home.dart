@@ -2,16 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:apam/beranda.dart';
 
 void main() =>
     runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Home()));
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final _formKey = GlobalKey<FormState>();
+  final _nikController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   Future<String> fetchNamaRS() async {
     final response = await http.get(
-      Uri.parse('http://10.0.2.2/apiapam/get_home.php'), //api file get_home
+      Uri.parse('http://192.168.1.6/apiapam/get_home.php'),
     );
 
     if (response.statusCode == 200) {
@@ -22,39 +32,65 @@ class Home extends StatelessWidget {
     }
   }
 
+  void _login() async {
+    if (_formKey.currentState!.validate()) {
+      final nik = _nikController.text;
+      final password = _passwordController.text;
+
+      final response = await http.post(
+        Uri.parse('http://192.168.1.6/apiapam/auth.php'),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({'nik': nik, 'password': password}),
+      );
+
+      final data = json.decode(response.body);
+
+      if (data['status'] == 'success') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => BerandaPage(nik: nik)),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(data['message'])));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             colors: [
-              const Color.fromARGB(255, 8, 211, 123),
-              const Color.fromARGB(255, 8, 213, 125),
+              Color.fromARGB(255, 8, 211, 123),
+              Color.fromARGB(255, 8, 213, 125),
             ],
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 80),
+            const SizedBox(height: 80),
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   FadeInUp(
-                    duration: Duration(milliseconds: 1000),
-                    child: Text(
+                    duration: const Duration(milliseconds: 1000),
+                    child: const Text(
                       "Login",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   FadeInUp(
-                    duration: Duration(milliseconds: 1300),
+                    duration: const Duration(milliseconds: 1300),
                     child: FutureBuilder<String>(
                       future: fetchNamaRS(),
                       builder: (context, snapshot) {
@@ -88,10 +124,10 @@ class Home extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 3),
+            const SizedBox(height: 3),
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(60),
@@ -99,93 +135,104 @@ class Home extends StatelessWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 20),
-                      FadeInUp(
-                        duration: Duration(milliseconds: 1400),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color.fromRGBO(225, 95, 27, .3),
-                                blurRadius: 20,
-                                offset: Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: Colors.grey.shade200,
+                  padding: const EdgeInsets.all(30),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(height: 20),
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 1400),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromRGBO(225, 95, 27, .3),
+                                  blurRadius: 20,
+                                  offset: Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.shade200,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: "Nomer NIK",
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    border: InputBorder.none,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: Colors.grey.shade200,
+                                  child: TextFormField(
+                                    controller: _nikController,
+                                    decoration: const InputDecoration(
+                                      hintText: "Nomor NIK",
+                                      hintStyle: TextStyle(color: Colors.grey),
+                                      border: InputBorder.none,
                                     ),
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Nomor NIK wajib diisi';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                 ),
-                                child: TextField(
-                                  obscureText: true,
-                                  decoration: InputDecoration(
-                                    hintText: "Password",
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    border: InputBorder.none,
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: TextFormField(
+                                    controller: _passwordController,
+                                    obscureText: true,
+                                    decoration: const InputDecoration(
+                                      hintText: "Password",
+                                      hintStyle: TextStyle(color: Colors.grey),
+                                      border: InputBorder.none,
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Password wajib diisi';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      FadeInUp(
-                        duration: Duration(milliseconds: 1600),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: SizedBox(
-                            width: 110,
-                            height: 50,
-                            child: MaterialButton(
-                              onPressed: () {},
-                              color: Colors.orange[900],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Masuk",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                        const SizedBox(height: 30),
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 1600),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                              width: 110,
+                              height: 50,
+                              child: MaterialButton(
+                                onPressed: _login,
+                                color: Colors.orange[900],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Masuk",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
