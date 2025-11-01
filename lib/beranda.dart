@@ -2,19 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-//  halaman Edukasi (ganti dengan halaman asli kamu)
-class EdukasiPage extends StatelessWidget {
-  const EdukasiPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Edukasi")),
-      body: const Center(child: Text("Halaman Edukasi")),
-    );
-  }
-}
+import 'package:apam/edukasi.dart';
+import 'package:apam/setting.dart';
+import 'package:apam/saran.dart';
+import 'package:apam/jadwal.dart';
+import 'package:apam/poli.dart';
 
 class BerandaPage extends StatefulWidget {
   final String nik;
@@ -210,17 +202,40 @@ class _BerandaPageState extends State<BerandaPage> {
                       Icons.account_circle,
                       "Daftar Poli",
                       Colors.green,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DaftarPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuCard(
                       Icons.calendar_today,
                       "Jadwal Dokter",
                       const Color.fromARGB(255, 235, 218, 33),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const JadwalPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuCard(
                       Icons.edit,
                       "Saran",
                       const Color.fromARGB(255, 5, 85, 204),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SaranPage(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -249,7 +264,12 @@ class _BerandaPageState extends State<BerandaPage> {
                       const Color.fromARGB(255, 39, 176, 71),
                       margin: const EdgeInsets.only(top: 16, left: 30),
                       onTap: () {
-                        print("Menu Belajar ditekan");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsPage(),
+                          ),
+                        );
                       },
                     ),
                   ],
