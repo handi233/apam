@@ -3,6 +3,19 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+//  halaman Edukasi (ganti dengan halaman asli kamu)
+class EdukasiPage extends StatelessWidget {
+  const EdukasiPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Edukasi")),
+      body: const Center(child: Text("Halaman Edukasi")),
+    );
+  }
+}
+
 class BerandaPage extends StatefulWidget {
   final String nik;
 
@@ -34,7 +47,6 @@ class _BerandaPageState extends State<BerandaPage> {
 
       List<String> tempImages = [];
 
-      // Ambil hanya 1 gambar pertama dari response pertama
       if (response1.statusCode == 200) {
         List<dynamic> data1 = jsonDecode(response1.body);
         if (data1.isNotEmpty) {
@@ -42,7 +54,6 @@ class _BerandaPageState extends State<BerandaPage> {
         }
       }
 
-      // Ambil hanya 1 gambar pertama dari response kedua
       if (response2.statusCode == 200) {
         List<dynamic> data2 = jsonDecode(response2.body);
         if (data2.isNotEmpty) {
@@ -67,43 +78,69 @@ class _BerandaPageState extends State<BerandaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(left: 30.0, top: 40.0, right: 30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Welcome, ${widget.nik}",
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF2193b0), Color(0xFF6dd5ed)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 20.0,
             ),
-            const SizedBox(height: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Welcome, ${widget.nik}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 25),
 
-            if (isLoading)
-              const Center(child: CircularProgressIndicator())
-            else if (hasError)
-              const Center(
-                child: Text(
-                  "Gagal memuat gambar dari database",
-                  style: TextStyle(color: Colors.red),
-                ),
-              )
-            else if (imageUrls.isEmpty)
-              const Center(child: Text("Tidak ada gambar tersedia"))
-            else
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: 200.0,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  viewportFraction: 0.8,
-                  aspectRatio: 16 / 9,
-                  autoPlayInterval: const Duration(seconds: 3),
-                ),
-                items: imageUrls.map((imageUrl) {
-                  return Builder(
-                    builder: (BuildContext context) {
+                if (isLoading)
+                  const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                else if (hasError)
+                  const Center(
+                    child: Text(
+                      "⚠️ Gagal memuat gambar dari database",
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                else if (imageUrls.isEmpty)
+                  const Center(
+                    child: Text(
+                      "Tidak ada gambar tersedia",
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  )
+                else
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      height: 200.0,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                      viewportFraction: 0.85,
+                      aspectRatio: 16 / 9,
+                      autoPlayInterval: const Duration(seconds: 3),
+                    ),
+                    items: imageUrls.map((imageUrl) {
                       return ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(16),
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -113,7 +150,11 @@ class _BerandaPageState extends State<BerandaPage> {
                               loadingBuilder: (context, child, progress) {
                                 if (progress == null) return child;
                                 return const Center(
-                                  child: CircularProgressIndicator(),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
                                 );
                               },
                               errorBuilder: (context, error, stackTrace) {
@@ -122,20 +163,144 @@ class _BerandaPageState extends State<BerandaPage> {
                                   child: const Center(
                                     child: Icon(
                                       Icons.broken_image,
-                                      color: Colors.red,
+                                      color: Colors.redAccent,
                                       size: 50,
                                     ),
                                   ),
                                 );
                               },
                             ),
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black.withOpacity(0.3),
+                                    Colors.transparent,
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       );
-                    },
-                  );
-                }).toList(),
+                    }).toList(),
+                  ),
+
+                const SizedBox(height: 30),
+
+                const Text(
+                  "Menu Pilihan",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // Row pertama
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildMenuCard(
+                      Icons.account_circle,
+                      "Daftar Poli",
+                      Colors.green,
+                      onTap: () {},
+                    ),
+                    _buildMenuCard(
+                      Icons.calendar_today,
+                      "Jadwal Dokter",
+                      const Color.fromARGB(255, 235, 218, 33),
+                    ),
+                    _buildMenuCard(
+                      Icons.edit,
+                      "Saran",
+                      const Color.fromARGB(255, 5, 85, 204),
+                    ),
+                  ],
+                ),
+
+                // Row kedua
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _buildMenuCard(
+                      Icons.lightbulb,
+                      "Edukasi",
+                      const Color.fromARGB(255, 187, 91, 50),
+                      margin: const EdgeInsets.only(top: 16, right: 16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EdukasiPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildMenuCard(
+                      Icons.settings,
+                      "Setting",
+                      const Color.fromARGB(255, 39, 176, 71),
+                      margin: const EdgeInsets.only(top: 16, left: 30),
+                      onTap: () {
+                        print("Menu Belajar ditekan");
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // _buildMenuCard sudah mendukung onTap dan margin
+  Widget _buildMenuCard(
+    IconData icon,
+    String title,
+    Color color, {
+    VoidCallback? onTap,
+    EdgeInsetsGeometry? margin,
+  }) {
+    return Container(
+      margin: margin,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(50),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.5),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
+              child: Icon(icon, color: Colors.white, size: 28),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),
