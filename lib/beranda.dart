@@ -261,7 +261,7 @@ class _BerandaPageState extends State<BerandaPage> {
                     _buildMenuCard(
                       Icons.settings,
                       "Setting",
-                      const Color.fromARGB(255, 39, 176, 71),
+                      const Color.fromARGB(255, 219, 22, 101),
                       margin: const EdgeInsets.only(top: 16, left: 30),
                       onTap: () {
                         Navigator.push(

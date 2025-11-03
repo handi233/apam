@@ -6,8 +6,15 @@ class DaftarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Daftar Poli")),
-      body: const Center(child: Text("Halaman Daftar")),
+      appBar: AppBar(
+        title: const Text("Daftar Poli"),
+        backgroundColor: const Color.fromARGB(255, 24, 150, 100), // warna Bar
+        foregroundColor: Colors.white, // teks putih
+      ),
+      body: const Center(
+        child: Text(" Daftar", style: TextStyle(fontSize: 18)),
+      ),
+      backgroundColor: Colors.white,
     );
   }
 }

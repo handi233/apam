@@ -6,8 +6,13 @@ class SaranPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Saran")),
-      body: const Center(child: Text("Halaman Saran")),
+      appBar: AppBar(
+        title: const Text("Saran"),
+        backgroundColor: const Color.fromARGB(255, 24, 150, 100), // warna Bar
+        foregroundColor: Colors.white, // teks putih
+      ),
+      body: const Center(child: Text("Saran", style: TextStyle(fontSize: 18))),
+      backgroundColor: Colors.white,
     );
   }
 }
