@@ -7,6 +7,7 @@ import 'package:apam/setting.dart';
 import 'package:apam/saran.dart';
 import 'package:apam/jadwal.dart';
 import 'package:apam/poli.dart';
+import 'package:apam/home.dart';
 
 class BerandaPage extends StatefulWidget {
   final String nik;
@@ -267,10 +268,56 @@ class _BerandaPageState extends State<BerandaPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const SettingsPage(),
+                            builder: (context) => const SettingPage(),
                           ),
                         );
                       },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        _buildMenuCard(
+                          Icons.logout,
+                          "Logout",
+                          Colors.redAccent,
+                          margin: const EdgeInsets.only(top: 16, left: 45),
+                          onTap: () async {
+                            bool? confirmLogout = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("Konfirmasi Logout"),
+                                content: const Text(
+                                  "Apakah Anda yakin ingin keluar dari akun ini?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: const Text("Batal"),
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent,
+                                    ),
+                                    child: const Text("Logout"),
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirmLogout == true) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Home(),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -282,7 +329,7 @@ class _BerandaPageState extends State<BerandaPage> {
     );
   }
 
-  // _buildMenuCard sudah mendukung onTap dan margin
+  // _buildMenuCard  onTap dan margin
   Widget _buildMenuCard(
     IconData icon,
     String title,
