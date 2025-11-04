@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2025 at 12:19 PM
+-- Generation Time: Nov 04, 2025 at 02:20 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,6 +20,61 @@ SET time_zone = "+00:00";
 --
 -- Database: `apamapk`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `daftar_poli`
+--
+
+CREATE TABLE `daftar_poli` (
+  `id_daftar` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
+  `tanggal_daftar` datetime DEFAULT current_timestamp(),
+  `keluhan` text DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Menunggu'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `jadwal_dokter`
+--
+
+CREATE TABLE `jadwal_dokter` (
+  `id` int(11) NOT NULL,
+  `nama_dokter` varchar(100) NOT NULL,
+  `spesialis` varchar(100) NOT NULL,
+  `hari` varchar(50) NOT NULL,
+  `jam_mulai` time NOT NULL,
+  `jam_selesai` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `jadwal_dokter`
+--
+
+INSERT INTO `jadwal_dokter` (`id`, `nama_dokter`, `spesialis`, `hari`, `jam_mulai`, `jam_selesai`) VALUES
+(1, 'dr.A', 'UMUM', 'SENIN', '07:00:00', '12:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `saran`
+--
+
+CREATE TABLE `saran` (
+  `id` int(11) NOT NULL,
+  `isi` text NOT NULL,
+  `tanggal` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `saran`
+--
+
+INSERT INTO `saran` (`id`, `isi`, `tanggal`) VALUES
+(1, 'a', '2025-11-04 11:41:41');
 
 -- --------------------------------------------------------
 
@@ -77,11 +132,30 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_users`, `nik`, `password`) VALUES
-(1, '123', '81dc9bdb52d04dc20036dbd8313ed055');
+(1, '123', 'e10adc3949ba59abbe56e057f20f883e');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `daftar_poli`
+--
+ALTER TABLE `daftar_poli`
+  ADD PRIMARY KEY (`id_daftar`),
+  ADD KEY `users_id` (`users_id`);
+
+--
+-- Indexes for table `jadwal_dokter`
+--
+ALTER TABLE `jadwal_dokter`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `saran`
+--
+ALTER TABLE `saran`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `settings`
@@ -111,6 +185,24 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `daftar_poli`
+--
+ALTER TABLE `daftar_poli`
+  MODIFY `id_daftar` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `jadwal_dokter`
+--
+ALTER TABLE `jadwal_dokter`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `saran`
+--
+ALTER TABLE `saran`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
@@ -127,6 +219,16 @@ ALTER TABLE `settings2`
 --
 ALTER TABLE `users`
   MODIFY `id_users` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `daftar_poli`
+--
+ALTER TABLE `daftar_poli`
+  ADD CONSTRAINT `daftar_poli_ibfk_1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id_users`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
