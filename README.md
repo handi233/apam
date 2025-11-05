@@ -35,8 +35,6 @@ Berikut contoh tampilan aplikasi Flutter:
 - Halaman utama
 - Halaman pengaturan (Settings)
 - Ganti password
-- Validasi input sederhana
-- Password menggunakan hashing MD5 (demo)
 
 ---
 
