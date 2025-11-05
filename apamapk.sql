@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 05, 2025 at 05:55 AM
+-- Generation Time: Nov 05, 2025 at 10:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -139,7 +139,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_users`, `nik`, `password`) VALUES
-(1, '123', 'e10adc3949ba59abbe56e057f20f883e');
+(1, '123', '81dc9bdb52d04dc20036dbd8313ed055');
 
 --
 -- Indexes for dumped tables

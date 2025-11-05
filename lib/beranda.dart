@@ -8,6 +8,7 @@ import 'package:apam/saran.dart';
 import 'package:apam/jadwal.dart';
 import 'package:apam/poli.dart';
 import 'package:apam/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BerandaPage extends StatefulWidget {
   final String nik;
@@ -22,6 +23,7 @@ class _BerandaPageState extends State<BerandaPage> {
   List<String> imageUrls = [];
   bool isLoading = true;
   bool hasError = false;
+  int idUsersFromDB = 0;
 
   @override
   void initState() {
@@ -264,15 +266,28 @@ class _BerandaPageState extends State<BerandaPage> {
                       "Setting",
                       const Color.fromARGB(255, 219, 22, 101),
                       margin: const EdgeInsets.only(top: 16, left: 30),
-                      onTap: () {
+                      onTap: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        int? idUsersFromDB = prefs.getInt('id_users');
+                        if (idUsersFromDB == null || idUsersFromDB == 0) {
+                          // Bisa pakai snackbar atau alert kalau id belum tersedia
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("User belum login!")),
+                          );
+                          return;
+                        }
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const SettingPage(),
+                            builder: (context) =>
+                                SettingPage(idUsers: idUsersFromDB!),
                           ),
                         );
                       },
                     ),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -291,6 +306,14 @@ class _BerandaPageState extends State<BerandaPage> {
                                 ),
                                 actions: [
                                   TextButton(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: const Color.fromARGB(
+                                        255,
+                                        15,
+                                        15,
+                                        15,
+                                      ),
+                                    ),
                                     child: const Text("Batal"),
                                     onPressed: () =>
                                         Navigator.pop(context, false),
@@ -298,8 +321,9 @@ class _BerandaPageState extends State<BerandaPage> {
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.redAccent,
+                                      foregroundColor: Colors.white,
                                     ),
-                                    child: const Text("Logout"),
+                                    child: const Text("Keluar"),
                                     onPressed: () =>
                                         Navigator.pop(context, true),
                                   ),
