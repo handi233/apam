@@ -1,6 +1,6 @@
-# APAM - Aplikasi Flutter & PHP untuk Manajemen User
+# APAM - Aplikasi APAM Pendaftaran Mandiri Pasien
 
-Aplikasi Flutter sederhana dengan backend PHP untuk login user dan pengelolaan password. User dapat login, mengakses pengaturan, dan mengganti password. Backend menangani autentikasi dan update password.
+Aplikasi daftar mandiri pasien poli Rumah Sakit.
 
 ---
 
@@ -23,11 +23,9 @@ Aplikasi Flutter sederhana dengan backend PHP untuk login user dan pengelolaan p
 
 Berikut contoh tampilan aplikasi Flutter:  
 
-![Login Page](screenshots/login.png)  
-![Home Page](screenshots/home.png)  
-![Settings Page](screenshots/settings.png)  
+![Login Page](<img width="320" height="640" alt="screenshot" src="https://github.com/user-attachments/assets/4926a29f-a503-4023-a907-ff4dd1034416" />)
+![Home Page] (<img width="320" height="640" alt="Screenshot_1762335126" src="https://github.com/user-attachments/assets/8a881bbe-d1bf-46e4-b007-d70708711dba" />)
 
-> **Catatan:** Silakan buat folder `screenshots` di repo dan tambahkan gambar UI Flutter untuk visualisasi.
 
 ---
 
@@ -72,7 +70,4 @@ cd apam
 
 3. Import database di phpmyadmin/cmd apamapk.sql
 
-4.Install Visual Studio Code
-
-## Capture Penggunaan Aplikasi 
 
