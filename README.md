@@ -27,7 +27,7 @@ Berikut contoh tampilan aplikasi Flutter:
 ![Home Page] ! (<img width="320" height="640" alt="Screenshot_1762335126" src="https://github.com/user-attachments/assets/8a881bbe-d1bf-46e4-b007-d70708711dba" />)
 
 
----
+
 
 ## Fitur
 
