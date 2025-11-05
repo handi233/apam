@@ -3,6 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:apam/beranda.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() =>
     runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Home()));
@@ -33,28 +34,63 @@ class _HomeState extends State<Home> {
   }
 
   void _login() async {
-    if (_formKey.currentState!.validate()) {
-      final nik = _nikController.text;
-      final password = _passwordController.text;
+    if (!_formKey.currentState!.validate()) return;
 
+    final nik = _nikController.text;
+    final password = _passwordController.text;
+
+    try {
       final response = await http.post(
         Uri.parse('http://192.168.1.6/apiapam/auth.php'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'nik': nik, 'password': password}),
       );
 
-      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print('Response data: $data'); // debug: cek isi API
 
-      if (data['status'] == 'success') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => BerandaPage(nik: nik)),
-        );
+        if (data['status'] == 'success') {
+          // Pastikan 'id_users' ada dan bisa diubah menjadi int
+          int idUsers = 0;
+          final dynamic idFromApi = data['id_users'];
+
+          if (idFromApi != null) {
+            // Cek dulu tipe data dari API, bisa int atau string
+            if (idFromApi is int) {
+              idUsers = idFromApi;
+            } else if (idFromApi is String) {
+              idUsers = int.tryParse(idFromApi) ?? 0;
+            }
+          }
+
+          if (idUsers <= 0) {
+            idUsers = 1;
+          }
+
+          final String nik = _nikController.text;
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setInt('id_users', idUsers);
+          await prefs.setString('nik', nik);
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => BerandaPage(nik: nik)),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(data['message'] ?? 'Login gagal')),
+          );
+        }
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(data['message'])));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Server error: ${response.statusCode}')),
+        );
       }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
     }
   }
 

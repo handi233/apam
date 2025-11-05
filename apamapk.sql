@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 04, 2025 at 02:20 PM
+-- Generation Time: Nov 05, 2025 at 05:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -28,12 +28,19 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `daftar_poli` (
-  `id_daftar` int(11) NOT NULL,
   `users_id` int(11) NOT NULL,
-  `tanggal_daftar` datetime DEFAULT current_timestamp(),
-  `keluhan` text DEFAULT NULL,
-  `status` varchar(50) DEFAULT 'Menunggu'
+  `tgl_daftar` date NOT NULL,
+  `poli_tujuan` varchar(100) NOT NULL,
+  `keluhan` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `daftar_poli`
+--
+
+INSERT INTO `daftar_poli` (`users_id`, `tgl_daftar`, `poli_tujuan`, `keluhan`, `created_at`) VALUES
+(1, '2025-11-05', 'Poli Anak', 'tt', '2025-11-05 04:51:22');
 
 -- --------------------------------------------------------
 
@@ -142,7 +149,7 @@ INSERT INTO `users` (`id_users`, `nik`, `password`) VALUES
 -- Indexes for table `daftar_poli`
 --
 ALTER TABLE `daftar_poli`
-  ADD PRIMARY KEY (`id_daftar`),
+  ADD PRIMARY KEY (`users_id`),
   ADD KEY `users_id` (`users_id`);
 
 --
@@ -188,7 +195,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `daftar_poli`
 --
 ALTER TABLE `daftar_poli`
-  MODIFY `id_daftar` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `users_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `jadwal_dokter`
@@ -228,7 +235,7 @@ ALTER TABLE `users`
 -- Constraints for table `daftar_poli`
 --
 ALTER TABLE `daftar_poli`
-  ADD CONSTRAINT `daftar_poli_ibfk_1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id_users`);
+  ADD CONSTRAINT `daftar_poli_ibfk_1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id_users`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

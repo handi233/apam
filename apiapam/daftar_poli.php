@@ -1,30 +1,36 @@
 <?php
-header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
+
 include 'koneksi.php';
 
-// Ambil data JSON dari request
-$data = json_decode(file_get_contents("php://input"), true);
+// Coba baca raw input (JSON)
+$raw = file_get_contents("php://input");
+$data = json_decode($raw, true);
 
-$users_id = $data['users_id'] ?? '';
-$tanggal_daftar = $data['tanggal_daftar'] ?? '';
-$keluhan = $data['keluhan'] ?? '';
-$status = $data['status'] ?? 'Pending';
-
-// Cek data lengkap
-if ($users_id && $tanggal_daftar && $keluhan) {
-    // Prepared statement untuk mencegah SQL Injection
-    $stmt = $conn->prepare("INSERT INTO daftar_poli (users_id, tanggal_daftar, keluhan, status) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("isss", $users_id, $tanggal_daftar, $keluhan, $status);
-
-    if ($stmt->execute()) {
-        echo json_encode(["message" => "Berhasil daftar"]);
-    } else {
-        echo json_encode(["error" => "Gagal daftar: " . $stmt->error]);
-    }
-
-    $stmt->close();
-} else {
-    echo json_encode(["error" => "Data tidak lengkap"]);
+// Jika gagal decode JSON, coba baca POST biasa
+if ($data === null) {
+    $data = $_POST;
 }
 
-$conn->close();
+// Ambil variabel
+$users_id = isset($data['users_id']) ? intval($data['users_id']) : 0;
+$tgl_daftar = $data['tgl_daftar'] ?? '';
+$poli_tujuan = $data['poli_tujuan'] ?? '';
+$keluhan = $data['keluhan'] ?? '';
+
+if ($users_id == 0 || empty($tgl_daftar) || empty($poli_tujuan) || empty($keluhan)) {
+    echo json_encode(["success" => false, "message" => "Data tidak lengkap", "raw" => $data]);
+    exit;
+}
+
+$query = "INSERT INTO daftar_poli (users_id, tgl_daftar, poli_tujuan, keluhan)
+          VALUES ('$users_id', '$tgl_daftar', '$poli_tujuan', '$keluhan')";
+
+if (mysqli_query($conn, $query)) {
+    echo json_encode(["success" => true, "message" => "Pendaftaran berhasil disimpan."]);
+} else {
+    echo json_encode(["success" => false, "message" => "Gagal menyimpan data.", "error" => mysqli_error($conn)]);
+}
