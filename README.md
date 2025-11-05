@@ -23,8 +23,8 @@ Aplikasi daftar mandiri pasien poli Rumah Sakit.
 
 Berikut contoh tampilan aplikasi Flutter:  
 
- (<img width="320" height="640" alt="Screenshot_1762335672" src="https://github.com/user-attachments/assets/c7bc0acc-de1f-4c3c-86a6-f700b763a864" />)
- (<img width="320" height="640" alt="Screenshot_1762335126" src="https://github.com/user-attachments/assets/8a881bbe-d1bf-46e4-b007-d70708711dba" />)
+<img width="320" height="640" alt="Screenshot_1762335672" src="https://github.com/user-attachments/assets/c7bc0acc-de1f-4c3c-86a6-f700b763a864" />
+<img width="320" height="640" alt="Screenshot_1762335126" src="https://github.com/user-attachments/assets/8a881bbe-d1bf-46e4-b007-d70708711dba" />
 
 
 
