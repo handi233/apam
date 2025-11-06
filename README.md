@@ -68,4 +68,5 @@ cd apam
 
 3. Import database di phpmyadmin/cmd apamapk.sql
 
-
+## Lisensi
+Aplikasi ini mengunakan lisensi apache 2.0. Dilarang keras dijual 
