@@ -11,10 +11,6 @@ Aplikasi daftar mandiri pasien poli Rumah Sakit.
 - [Teknologi](#teknologi)
 - [Persyaratan](#persyaratan)
 - [Instalasi](#instalasi)
-- [Struktur Folder](#struktur-folder)
-- [Penggunaan](#penggunaan)
-- [Endpoint API](#endpoint-api)
-- [Catatan](#catatan)
 - [Lisensi](#lisensi)
 
 ---
