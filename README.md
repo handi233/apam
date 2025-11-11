@@ -1,16 +1,68 @@
-# apam
+# APAM - Aplikasi APAM Pendaftaran Mandiri Pasien
 
-A new Flutter project.
+Aplikasi daftar mandiri pasien poli Rumah Sakit.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Daftar Isi
 
-A few resources to get you started if this is your first Flutter project:
+- [Demo](#demo)
+- [Fitur](#fitur)
+- [Teknologi](#teknologi)
+- [Persyaratan](#persyaratan)
+- [Instalasi](#instalasi)
+- [Lisensi](#lisensi)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Demo
+
+Berikut contoh tampilan aplikasi Flutter:  
+
+<img width="320" height="640" alt="Screenshot_1762335672" src="https://github.com/user-attachments/assets/c7bc0acc-de1f-4c3c-86a6-f700b763a864" />
+<img width="320" height="640" alt="Screenshot_1762335126" src="https://github.com/user-attachments/assets/8a881bbe-d1bf-46e4-b007-d70708711dba" />
+
+
+
+
+## Fitur
+
+- Login user dengan NIK dan password
+- Halaman utama
+- Halaman pengaturan (Settings)
+- Ganti password
+
+---
+
+## Teknologi
+
+- **Frontend:** Flutter (Dart)  
+- **Backend:** PHP  
+- **Database:** MySQL  
+- **HTTP:** JSON API untuk komunikasi antara Flutter dan PHP
+
+---
+
+## Persyaratan
+
+- Flutter SDK >= 3.0  
+- Perangkat Android/iOS atau emulator  
+- PHP >= 7.4 (XAMPP / WAMP / MAMP)  
+- Database MySQL  
+
+---
+
+## Instalasi
+
+1. **Clone repository ini:**
+
+```bash
+git clone https://github.com/handi233/apam.git
+cd apam
+
+2. **Pindah file apiapam ada didalam ke folder htdocs/www**
+
+3. Import database di phpmyadmin/cmd apamapk.sql
+
+# Lisensi
+Aplikasi ini mengunakan lisensi apache 2.0. Dilarang keras dijual 
