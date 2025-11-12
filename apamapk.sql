@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 05, 2025 at 10:10 AM
+-- Generation Time: Nov 12, 2025 at 02:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -63,6 +63,26 @@ CREATE TABLE `jadwal_dokter` (
 
 INSERT INTO `jadwal_dokter` (`id`, `nama_dokter`, `spesialis`, `hari`, `jam_mulai`, `jam_selesai`) VALUES
 (1, 'dr.A', 'UMUM', 'SENIN', '07:00:00', '12:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifikasi`
+--
+
+CREATE TABLE `notifikasi` (
+  `id_user` int(11) NOT NULL,
+  `pesan` varchar(50) NOT NULL,
+  `status` enum('0','1') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifikasi`
+--
+
+INSERT INTO `notifikasi` (`id_user`, `pesan`, `status`) VALUES
+(1, 'Jadwal poli baru tersedia', '1'),
+(2, 'Aplikasi APAM maintenance', '0');
 
 -- --------------------------------------------------------
 
@@ -159,6 +179,12 @@ ALTER TABLE `jadwal_dokter`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `notifikasi`
+--
+ALTER TABLE `notifikasi`
+  ADD PRIMARY KEY (`id_user`);
+
+--
 -- Indexes for table `saran`
 --
 ALTER TABLE `saran`
@@ -202,6 +228,12 @@ ALTER TABLE `daftar_poli`
 --
 ALTER TABLE `jadwal_dokter`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `notifikasi`
+--
+ALTER TABLE `notifikasi`
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `saran`

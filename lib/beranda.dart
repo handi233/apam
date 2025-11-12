@@ -19,16 +19,80 @@ class BerandaPage extends StatefulWidget {
   State<BerandaPage> createState() => _BerandaPageState();
 }
 
-class _BerandaPageState extends State<BerandaPage> {
+class _BerandaPageState extends State<BerandaPage>
+    with SingleTickerProviderStateMixin {
   List<String> imageUrls = [];
   bool isLoading = true;
   bool hasError = false;
   int idUsersFromDB = 0;
 
+  // Notifikasi
+  int notifCount = 0;
+  List<dynamic> notifList = [];
+
+  // Animation untuk badge
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
   @override
   void initState() {
     super.initState();
-    fetchImagesFromDatabase();
+    _initAnimation();
+    loadUserIdAndFetchData();
+  }
+
+  void _initAnimation() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _animation = Tween<double>(
+      begin: 1.0,
+      end: 1.3,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _controller.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        if (notifCount > 0) _controller.forward();
+      }
+    });
+  }
+
+  Future<void> loadUserIdAndFetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? idUser = prefs.getInt('id_users');
+    if (idUser != null) {
+      setState(() {
+        idUsersFromDB = idUser;
+      });
+      await fetchNotifikasi();
+    }
+    await fetchImagesFromDatabase();
+  }
+
+  Future<void> fetchNotifikasi() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.1.6/apiapam/notifikasi.php'),
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+
+        // Tidak perlu filter enum lagi karena PHP sudah filter status=1
+        setState(() {
+          notifList = data;
+          notifCount = data.length;
+        });
+
+        if (notifCount > 0) _controller.forward();
+      } else {
+        print('Gagal fetch notifikasi, status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Error fetching notifications: $e");
+    }
   }
 
   Future<void> fetchImagesFromDatabase() async {
@@ -44,16 +108,12 @@ class _BerandaPageState extends State<BerandaPage> {
 
       if (response1.statusCode == 200) {
         List<dynamic> data1 = jsonDecode(response1.body);
-        if (data1.isNotEmpty) {
-          tempImages.add(data1[0]['image'].toString());
-        }
+        if (data1.isNotEmpty) tempImages.add(data1[0]['image'].toString());
       }
 
       if (response2.statusCode == 200) {
         List<dynamic> data2 = jsonDecode(response2.body);
-        if (data2.isNotEmpty) {
-          tempImages.add(data2[0]['image'].toString());
-        }
+        if (data2.isNotEmpty) tempImages.add(data2[0]['image'].toString());
       }
 
       setState(() {
@@ -68,6 +128,62 @@ class _BerandaPageState extends State<BerandaPage> {
       });
       print("Error fetching images: $e");
     }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  // Widget lonceng notifikasi
+  Widget _notificationBell() {
+    return InkWell(
+      onTap: () {
+        if (notifCount == 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Belum ada notifikasi baru")),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NotifikasiPage(notifList: notifList),
+            ),
+          );
+        }
+      },
+      borderRadius: BorderRadius.circular(30),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          const Icon(Icons.notifications, color: Colors.white, size: 28),
+          if (notifCount > 0)
+            Positioned(
+              right: -2,
+              top: -2,
+              child: ScaleTransition(
+                scale: _animation,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    notifCount.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -90,16 +206,27 @@ class _BerandaPageState extends State<BerandaPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Welcome, ${widget.nik}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Welcome, ${widget.nik}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    _notificationBell(),
+                  ],
                 ),
                 const SizedBox(height: 25),
 
+                // Carousel
                 if (isLoading)
                   const Center(
                     child: CircularProgressIndicator(
@@ -184,7 +311,6 @@ class _BerandaPageState extends State<BerandaPage> {
                   ),
 
                 const SizedBox(height: 30),
-
                 const Text(
                   "Menu Pilihan",
                   style: TextStyle(
@@ -194,12 +320,12 @@ class _BerandaPageState extends State<BerandaPage> {
                     letterSpacing: 0.5,
                   ),
                 ),
-
                 const SizedBox(height: 10),
 
-                // Row pertama
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // Menu dengan Wrap
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
                   children: [
                     _buildMenuCard(
                       Icons.account_circle,
@@ -217,7 +343,7 @@ class _BerandaPageState extends State<BerandaPage> {
                     _buildMenuCard(
                       Icons.calendar_today,
                       "Jadwal Dokter",
-                      const Color.fromARGB(255, 235, 218, 33),
+                      const Color(0xFFEBDA21),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -230,7 +356,7 @@ class _BerandaPageState extends State<BerandaPage> {
                     _buildMenuCard(
                       Icons.edit,
                       "Saran",
-                      const Color.fromARGB(255, 5, 85, 204),
+                      const Color(0xFF0555CC),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -240,18 +366,11 @@ class _BerandaPageState extends State<BerandaPage> {
                         );
                       },
                     ),
-                  ],
-                ),
-
-                // Row kedua
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
                     _buildMenuCard(
                       Icons.lightbulb,
                       "Edukasi",
-                      const Color.fromARGB(255, 187, 91, 50),
-                      margin: const EdgeInsets.only(top: 16, right: 16),
+                      const Color(0xFFBB5B32),
+                      margin: const EdgeInsets.only(top: 16, left: 5),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -264,14 +383,16 @@ class _BerandaPageState extends State<BerandaPage> {
                     _buildMenuCard(
                       Icons.settings,
                       "Setting",
-                      const Color.fromARGB(255, 219, 22, 101),
-                      margin: const EdgeInsets.only(top: 16, left: 30),
+                      const Color(0xFFDB1665),
+                      margin: const EdgeInsets.only(
+                        top: 16,
+                        left: 15,
+                      ), // margin kiri
                       onTap: () async {
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         int? idUsersFromDB = prefs.getInt('id_users');
                         if (idUsersFromDB == null || idUsersFromDB == 0) {
-                          // Bisa pakai snackbar atau alert kalau id belum tersedia
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text("User belum login!")),
                           );
@@ -282,66 +403,61 @@ class _BerandaPageState extends State<BerandaPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                SettingPage(idUsers: idUsersFromDB!),
+                                SettingPage(idUsers: idUsersFromDB),
                           ),
                         );
                       },
                     ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        _buildMenuCard(
-                          Icons.logout,
-                          "Logout",
-                          Colors.redAccent,
-                          margin: const EdgeInsets.only(top: 16, left: 45),
-                          onTap: () async {
-                            bool? confirmLogout = await showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text("Konfirmasi Logout"),
-                                content: const Text(
-                                  "Apakah Anda yakin ingin keluar dari akun ini?",
+                    _buildMenuCard(
+                      Icons.logout,
+                      "Logout",
+                      Colors.redAccent,
+                      margin: const EdgeInsets.only(
+                        top: 16,
+                        left: 15,
+                      ), // margin kiri
+                      onTap: () async {
+                        bool? confirmLogout = await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("Konfirmasi Logout"),
+                            content: const Text(
+                              "Apakah Anda yakin ingin keluar dari akun ini?",
+                            ),
+                            actions: [
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: const Color.fromARGB(
+                                    255,
+                                    15,
+                                    15,
+                                    15,
+                                  ),
                                 ),
-                                actions: [
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: const Color.fromARGB(
-                                        255,
-                                        15,
-                                        15,
-                                        15,
-                                      ),
-                                    ),
-                                    child: const Text("Batal"),
-                                    onPressed: () =>
-                                        Navigator.pop(context, false),
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.redAccent,
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    child: const Text("Keluar"),
-                                    onPressed: () =>
-                                        Navigator.pop(context, true),
-                                  ),
-                                ],
+                                child: const Text("Batal"),
+                                onPressed: () => Navigator.pop(context, false),
                               ),
-                            );
-
-                            if (confirmLogout == true) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const Home(),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.redAccent,
+                                  foregroundColor: Colors.white,
                                 ),
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                                child: const Text("Keluar"),
+                                onPressed: () => Navigator.pop(context, true),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirmLogout == true) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Home(),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -353,20 +469,20 @@ class _BerandaPageState extends State<BerandaPage> {
     );
   }
 
-  // _buildMenuCard  onTap dan margin
   Widget _buildMenuCard(
     IconData icon,
     String title,
     Color color, {
     VoidCallback? onTap,
-    EdgeInsetsGeometry? margin,
+    EdgeInsets? margin,
   }) {
     return Container(
-      margin: margin,
+      margin: margin ?? EdgeInsets.zero,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(50),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.all(16),
@@ -394,6 +510,29 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Halaman Notifikasi
+class NotifikasiPage extends StatelessWidget {
+  final List<dynamic> notifList;
+  const NotifikasiPage({Key? key, required this.notifList}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Notifikasi")),
+      body: ListView.builder(
+        itemCount: notifList.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: const Icon(Icons.notifications),
+            title: Text(notifList[index]['title'] ?? 'Tidak ada judul'),
+            subtitle: Text(notifList[index]['message'] ?? 'Tidak ada pesan'),
+          );
+        },
       ),
     );
   }
