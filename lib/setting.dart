@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; //atur api .env
 
 class SettingPage extends StatefulWidget {
   final int idUsers; //user yang login
@@ -16,11 +17,20 @@ class _SettingPageState extends State<SettingPage> {
   final _newPassController = TextEditingController();
   final _confirmPassController = TextEditingController();
   bool _loading = false;
+  late final String baseUrl;
 
   // Variabel untuk toggle show/hide password
   bool _obscureOld = true;
   bool _obscureNew = true;
   bool _obscureConfirm = true;
+
+  //route api .env debug
+  @override
+  void initState() {
+    super.initState();
+    baseUrl = dotenv.env['BASE_URL'] ?? '';
+    print("BASE_URL SaranPage: $baseUrl"); // Debug
+  }
 
   Future<void> changePassword() async {
     if (!_formKey.currentState!.validate()) return;
@@ -33,7 +43,7 @@ class _SettingPageState extends State<SettingPage> {
       String newPass = _newPassController.text;
 
       final response = await http.post(
-        Uri.parse("http://192.168.1.6/apiapam/ubah_password.php"),
+        Uri.parse("$baseUrl/ubah_password.php"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'id_users': widget.idUsers,

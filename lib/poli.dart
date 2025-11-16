@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; //atur api .env
 
 class DaftarPage extends StatefulWidget {
   const DaftarPage({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _DaftarPageState extends State<DaftarPage> {
   String? _selectedPoli;
   DateTime _selectedDate = DateTime.now();
   int? _usersId;
+  late final String baseUrl;
 
   final List<String> _poliOptions = [
     "Poli Umum",
@@ -28,6 +30,8 @@ class _DaftarPageState extends State<DaftarPage> {
   void initState() {
     super.initState();
     _loadUserId();
+    baseUrl = dotenv.env['BASE_URL'] ?? '';
+    print("BASE_URL: $baseUrl");
   }
 
   Future<void> _loadUserId() async {
@@ -51,7 +55,7 @@ class _DaftarPageState extends State<DaftarPage> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://192.168.1.6/apiapam/daftar_poli.php"),
+        Uri.parse("$baseUrl/daftar_poli.php"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "users_id": _usersId ?? 1,

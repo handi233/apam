@@ -3,25 +3,25 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; //atur api .env
 
-class JadwalPage extends StatefulWidget {
-  const JadwalPage({Key? key}) : super(key: key);
+class KamarPage extends StatefulWidget {
+  const KamarPage({Key? key}) : super(key: key);
 
   @override
-  _JadwalPageState createState() => _JadwalPageState();
+  _KamarPageState createState() => _KamarPageState();
 }
 
-class _JadwalPageState extends State<JadwalPage> {
-  List jadwal = [];
+class _KamarPageState extends State<KamarPage> {
+  List Kamar = [];
   bool isLoading = true;
   late final String baseUrl;
 
-  Future<void> ambilJadwal() async {
+  Future<void> getKamar() async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl/lihat_jadwal.php"));
+      final response = await http.get(Uri.parse("$baseUrl/get_kamar.php"));
 
       if (response.statusCode == 200) {
         setState(() {
-          jadwal = json.decode(response.body);
+          Kamar = json.decode(response.body);
           isLoading = false;
         });
       } else {
@@ -39,43 +39,35 @@ class _JadwalPageState extends State<JadwalPage> {
   void initState() {
     super.initState();
     baseUrl = dotenv.env['BASE_URL'] ?? '';
-    print("BASE_URL: $baseUrl");
-    ambilJadwal();
+    print("BASE_URL Kamar: $baseUrl"); // Debug
+    getKamar();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Jadwal Dokter"),
+        title: const Text("List Kamar Tersedia"),
         backgroundColor: const Color.fromARGB(255, 24, 150, 100),
         foregroundColor: Colors.white,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : jadwal.isEmpty
-          ? const Center(child: Text("Belum ada jadwal dokter."))
+          : Kamar.isEmpty
+          ? const Center(child: Text("Belum ada kamar kosong."))
           : ListView.builder(
-              itemCount: jadwal.length,
+              itemCount: Kamar.length,
               itemBuilder: (context, index) {
-                final d = jadwal[index];
+                final d = Kamar[index];
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 6,
                   ),
                   child: ListTile(
-                    leading: const Icon(
-                      Icons.calendar_month,
-                      color: Colors.green,
-                    ),
-                    title: Text(d['nama_dokter']),
-                    subtitle: Text(
-                      "Dokter:           ${d['spesialis']}\n"
-                      "Hari:               ${d['hari']}\n"
-                      "Jam Mulai:    ${d['jam_mulai']}\n"
-                      "Jam Selesai: ${d['jam_selesai']}",
-                    ),
+                    leading: const Icon(Icons.bed, color: Colors.green),
+                    title: Text("Kamar      : ${d['nama_kamar']}"),
+                    subtitle: Text("Sisa kamar : ${d['sisa_kamar']}"),
                   ),
                 );
               },

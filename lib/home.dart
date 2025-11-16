@@ -5,9 +5,13 @@ import 'dart:convert';
 import 'package:apam/beranda.dart';
 import 'package:apam/help.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() =>
-    runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Home()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Home()));
+}
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -20,6 +24,13 @@ class _HomeState extends State<Home> {
   final _formKey = GlobalKey<FormState>();
   final _nikController = TextEditingController();
   final _passwordController = TextEditingController();
+  late final String baseUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    baseUrl = dotenv.env['API_URL'] ?? '';
+  }
 
   Future<String> fetchNamaRS() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -29,9 +40,7 @@ class _HomeState extends State<Home> {
       return cachedNama;
     }
 
-    final response = await http.get(
-      Uri.parse('http://192.168.1.6/apiapam/get_home.php'),
-    );
+    final response = await http.get(Uri.parse('$baseUrl/get_home.php'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -49,10 +58,12 @@ class _HomeState extends State<Home> {
 
     final nik = _nikController.text;
     final password = _passwordController.text;
+    await dotenv.load(fileName: ".env");
+    final baseUrl = dotenv.env['BASE_URL'] ?? '';
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.6/apiapam/auth.php'),
+        Uri.parse('$baseUrl/auth.php'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'nik': nik, 'password': password}),
       );

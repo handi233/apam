@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; //atur api .env
 
 class SaranPage extends StatefulWidget {
   const SaranPage({Key? key}) : super(key: key);
@@ -13,6 +14,14 @@ class _SaranPageState extends State<SaranPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController isiController = TextEditingController();
   bool isLoading = false;
+  late final String baseUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    baseUrl = dotenv.env['BASE_URL'] ?? '';
+    print("BASE_URL SaranPage: $baseUrl"); // Debug
+  }
 
   Future<void> kirimSaran() async {
     if (!_formKey.currentState!.validate()) return;
@@ -21,7 +30,7 @@ class _SaranPageState extends State<SaranPage> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://192.168.1.6/apiapam/tambah_saran.php"),
+        Uri.parse("$baseUrl/tambah_saran.php"),
         body: {"isi": isiController.text},
       );
 

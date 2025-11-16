@@ -2,8 +2,11 @@ import 'package:apam/splash.dart';
 import 'package:apam/home.dart';
 import 'package:apam/beranda.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
