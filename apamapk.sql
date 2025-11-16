@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 12, 2025 at 02:21 PM
+-- Generation Time: Nov 16, 2025 at 03:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -28,6 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `daftar_poli` (
+  `id` int(11) NOT NULL,
   `users_id` int(11) NOT NULL,
   `tgl_daftar` date NOT NULL,
   `poli_tujuan` varchar(100) NOT NULL,
@@ -39,8 +40,10 @@ CREATE TABLE `daftar_poli` (
 -- Dumping data for table `daftar_poli`
 --
 
-INSERT INTO `daftar_poli` (`users_id`, `tgl_daftar`, `poli_tujuan`, `keluhan`, `created_at`) VALUES
-(1, '2025-11-05', 'Poli Anak', 'tt', '2025-11-05 04:51:22');
+INSERT INTO `daftar_poli` (`id`, `users_id`, `tgl_daftar`, `poli_tujuan`, `keluhan`, `created_at`) VALUES
+(1, 1, '2025-11-05', 'Poli Anak', 'tt', '2025-11-05 04:51:22'),
+(2, 1, '2025-11-17', 'Poli Kandungan', 'ts', '2025-11-16 11:46:07'),
+(3, 1, '2025-11-17', 'Poli Kandungan', 'batuk', '2025-11-16 11:51:35');
 
 -- --------------------------------------------------------
 
@@ -67,6 +70,25 @@ INSERT INTO `jadwal_dokter` (`id`, `nama_dokter`, `spesialis`, `hari`, `jam_mula
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `list_kamar`
+--
+
+CREATE TABLE `list_kamar` (
+  `id` int(20) NOT NULL,
+  `nama_kamar` varchar(30) NOT NULL,
+  `sisa_kamar` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `list_kamar`
+--
+
+INSERT INTO `list_kamar` (`id`, `nama_kamar`, `sisa_kamar`) VALUES
+(1, 'anggrek', '30');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notifikasi`
 --
 
@@ -81,7 +103,7 @@ CREATE TABLE `notifikasi` (
 --
 
 INSERT INTO `notifikasi` (`id_user`, `pesan`, `status`) VALUES
-(1, 'Jadwal poli baru tersedia', '1'),
+(1, 'Jadwal poli baru tersedia', '0'),
 (2, 'Aplikasi APAM maintenance', '0');
 
 -- --------------------------------------------------------
@@ -101,7 +123,8 @@ CREATE TABLE `saran` (
 --
 
 INSERT INTO `saran` (`id`, `isi`, `tanggal`) VALUES
-(1, 'a', '2025-11-04 11:41:41');
+(1, 'a', '2025-11-04 11:41:41'),
+(2, 'ok', '2025-11-16 11:36:31');
 
 -- --------------------------------------------------------
 
@@ -121,7 +144,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id_set`, `nama_rs`, `alamat_rs`, `logo`) VALUES
-(1, 'RSIA', 'Bogor', 'http://192.168.1.6/apiapam/uploads/img/logo.png');
+(1, 'RSIA', 'Bogor', 'uploads/img/logo.png');
 
 -- --------------------------------------------------------
 
@@ -139,8 +162,8 @@ CREATE TABLE `settings2` (
 --
 
 INSERT INTO `settings2` (`id`, `image`) VALUES
-(1, 'http://192.168.1.6/apiapam/uploads/img/carosel1.jpg'),
-(2, 'http://192.168.1.6/apiapam/uploads/img/carosel2.jpg');
+(1, 'uploads/img/carosel1.jpg'),
+(2, 'uploads/img/carosel2.jpg');
 
 -- --------------------------------------------------------
 
@@ -169,13 +192,19 @@ INSERT INTO `users` (`id_users`, `nik`, `password`) VALUES
 -- Indexes for table `daftar_poli`
 --
 ALTER TABLE `daftar_poli`
-  ADD PRIMARY KEY (`users_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `users_id` (`users_id`);
 
 --
 -- Indexes for table `jadwal_dokter`
 --
 ALTER TABLE `jadwal_dokter`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `list_kamar`
+--
+ALTER TABLE `list_kamar`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -221,13 +250,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `daftar_poli`
 --
 ALTER TABLE `daftar_poli`
-  MODIFY `users_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `jadwal_dokter`
 --
 ALTER TABLE `jadwal_dokter`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `list_kamar`
+--
+ALTER TABLE `list_kamar`
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `notifikasi`
@@ -239,7 +274,7 @@ ALTER TABLE `notifikasi`
 -- AUTO_INCREMENT for table `saran`
 --
 ALTER TABLE `saran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `settings`
