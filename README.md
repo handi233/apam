@@ -67,5 +67,7 @@ cd apam
 
 3. Import database di phpmyadmin/cmd apamapk.sql
 
-# Lisensi
+4. Silahkan atur konfigurasi route di .env
+
+//attention
 Aplikasi ini mengunakan lisensi apache 2.0. Dilarang keras dijual 
