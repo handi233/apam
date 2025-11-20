@@ -49,8 +49,8 @@ Berikut contoh tampilan aplikasi Flutter:
 ## Persyaratan
 
 - Flutter SDK >= 3.0  
-- Perangkat Android/iOS atau emulator  
-- PHP >= 7.4 (XAMPP / WAMP / MAMP)  
+- Perangkat Android/iOS 
+- PHP >= 8.0 (XAMPP)  
 - Database MySQL  
 
 ---
